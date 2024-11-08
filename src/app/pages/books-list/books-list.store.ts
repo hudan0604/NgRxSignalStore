@@ -11,6 +11,10 @@ import { computed, inject } from '@angular/core';
 import { BooksService } from '../../shared/services/books.service';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';
+import {
+  setPending,
+  withRequestStatus,
+} from '../../shared/store-features/request-status.features';
 
 type BooksListState = {
   books: Array<Book>;
@@ -18,6 +22,7 @@ type BooksListState = {
 
 export const BooksListStore = signalStore(
   withState<BooksListState>({ books: [] }),
+  withRequestStatus(),
   withComputed((store) => ({
     favoritesBooks: computed(() =>
       store.books().filter((book) => book.isInFavorites)
@@ -26,6 +31,7 @@ export const BooksListStore = signalStore(
   withMethods((store, booksService = inject(BooksService)) => ({
     getBooks: rxMethod<void>(
       pipe(
+        tap(() => patchState(store, setPending())),
         switchMap(() => booksService.getBooks()),
         tap((books) => patchState(store, { books }))
       )
