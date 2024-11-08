@@ -1,0 +1,15 @@
+<table>
+  <tr>
+    <th>Title</th>
+    <th>Author</th>
+    <th>Favorite</th>
+  </tr>
+  @for(book of store.books(); track book.id) {
+  <tr>
+    <td>{{ book.title }}</td>
+    <td>{{ book.author }}</td>
+
+    <td>{{ book.isInFavorites }}</td>
+  </tr>
+  }
+</table>
